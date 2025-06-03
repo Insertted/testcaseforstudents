@@ -22,20 +22,25 @@ class BaseRepo():
         print(cur.fetchall())
 
 
-    def create_cat(name, color, tail_length, whiskers_length):
-        cur = conn.cursor()
-        cur.execute("INSERT INTO cats(name, color, tail_length, whiskers_length) VALUES (%s%s%s%s)", (name, color, tail_length, whiskers_length))
+    def create_cat(cls, name, color, tail_length, whiskers_length):
+        with conn.cursor() as cur:
+            cur.execute("INSERT INTO cats(name, color, tail_length, whiskers_length) VALUES (%s%s%s%s)", (name, color, tail_length, whiskers_length)
+            )
+            conn.commit()
 
 
     def delete_cat(name):
         cur = conn.cursor()
-        cur.execute("DELETE FROM cats WHERE name=(%s)", (name))
+        cur.execute("DELETE FROM cats WHERE name=(%s,)", (name))
 
 
-    def update_cat(name):
-        cur = conn.cursor()
-        cur.execute("UPDATE cats SET tail_length = '123' WHERE name = (%s)", (name))
+    def update_cat(name, new_tail_length):
+        with conn.cursor() as cur:
+            cur.execute("UPDATE cats SET tail_length = %s WHERE name = %s", (new_tail_length,name)
+            )
+            conn.commit()
 
 baseRepo = BaseRepo()
 #baseRepo.ping_tables()
-baseRepo.create_cat(name="Musya", color="ginger", tail_length=100, whiskers_length=5)
+#baseRepo.create_cat(name="Musya", color="black", tail_length=100, whiskers_length=5)
+baseRepo.delete_cat(name="Musya", new_tail_length="123123123")
